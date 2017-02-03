@@ -60,7 +60,13 @@ class ModelData {
         }
 
         return this.collection.insert(model)
-            .then(result => result.ops);
+            .then(result => result.ops[0])
+            .then(dbModel => {
+                if (this.Klass.fromModel) {
+                    return this.Klass.fromModel(dbModel);
+                }
+                return dbModel;
+            });
     }
 }
 
