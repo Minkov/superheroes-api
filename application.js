@@ -1,7 +1,8 @@
 /* globals module require Promise */
 const express = require("express"),
     bodyParser = require("body-parser"),
-    cors = require("cors");
+    cors = require("cors"),
+    morgan = require("morgan");
 
 class Application {
     constructor(data, routers) {
@@ -12,6 +13,7 @@ class Application {
 
     init() {
         this.app = express();
+        this.app.use(morgan("combined"));
         this.app.use(bodyParser.json());
         this.app.use(cors());
         this.app.use(this.routers);

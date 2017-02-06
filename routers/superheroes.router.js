@@ -3,6 +3,15 @@
 const express = require("express");
 
 const Superhero = require("../models/superhero.model");
+const Mapper = require("../utils/mapper");
+
+const superheroProps = [
+    "id", "name", "secretIdentity", "imgUrl"
+];
+
+const superheroDetailsProps = [
+    "id", "name", "secretIdentity", "factions", "story", "imgUrl", "powers"
+];
 
 class SuperheroesRouter {
     constructor(data) {
@@ -15,18 +24,24 @@ class SuperheroesRouter {
     initRoutes() {
         this.router
             .get("/", (req, res) => {
+                let promise;
                 if (req.query.pattern) {
-                    return this.superheroesData.find(req.query.pattern)
-                        .then(superheroes => res.send(superheroes));
-                }
+                    promise = this.superheroesData.find(req.query.pattern);
+                } else {
 
-                return this.superheroesData.getAll()
+                    promise = this.superheroesData.getAll();
+                }
+                return promise
+                    .then(
+                        superheroes => superheroes.map(
+                            superhero => Mapper.map(superhero, superheroProps)))
                     .then(superheroes => res.send(superheroes));
             })
             .get("/:id", (req, res) => {
                 const id = req.params.id;
                 this.superheroesData.getById(id)
-                    .then(superheroes => res.send(superheroes));
+                    .then(superhero => Mapper.map(superhero, ...superheroDetailsProps))
+                    .then(superhero => res.send(superhero));
             })
             .post("/", (req, res) => {
                 const sh = req.body;

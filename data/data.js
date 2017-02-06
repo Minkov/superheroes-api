@@ -1,4 +1,5 @@
-/* globals module Promise */
+/* globals module Promise require */
+const ObjectId = require("mongodb").ObjectID;
 
 class ModelData {
     constructor(Klass, db) {
@@ -43,7 +44,7 @@ class ModelData {
     }
 
     getById(id) {
-        return this.collection.findOne({ _id: id })
+        return this.collection.findOne({ _id: new ObjectId(id) })
             .then(model => {
                 if (!this.Klass.fromModel) {
                     return model;
@@ -75,7 +76,6 @@ class Data {
         this.db = db;
         this.datas = {};
     }
-
     getModelData(Klass) {
         const klassName = Klass.name;
         if (!this.datas[klassName]) {

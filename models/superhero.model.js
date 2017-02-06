@@ -1,18 +1,29 @@
 /* globals module */
 
+const props = ["name", "secretIdentity", "imgUrl", "story", "factions", "powers", "_id"];
+
 class Superhero {
-    constructor(name, secretIdentity, id = null) {
+    constructor(name, secretIdentity, imgUrl, story, factions, powers, id = null) {
         this.name = name;
         this.secretIdentity = secretIdentity;
+        this.story = story;
+        this.factions = factions;
+        this.imgUrl = imgUrl;
+        this.powers = powers;
         this.id = id;
     }
 
     static fromModel(model) {
-        return new Superhero(model.name, model.secretIdentity, model._id);
+        const values =
+            props.reduce((a, prop) => {
+                a.push(model[prop]);
+                return a;
+            }, []);
+        return new Superhero(...values);
     }
 
     static getSearchProperties() {
-        return ["name", "secretIdentity"];
+        return ["name", "secretIdentity", "story"];
     }
 }
 
